@@ -7,3 +7,4 @@ class Table:
     mask = Mask(["123##456#", True, True])
     float = Float((1, 10), alias="hello_world")
     integer = Integer((1, 10), )
+    wchoice = WeighedChoice((['123', '456', 'hello'], [10, 20, 70]))
