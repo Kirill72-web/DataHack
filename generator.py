@@ -108,7 +108,7 @@ if __name__ == "__main__":
         output[field] = Alias(save[field]).generate(row_count)
 
     print("=======Logging Finished=======")
-    # output.to_parquet(argv.file+".parquet", index=False)
+    output.to_parquet(argv.file+".parquet", index=False)
     output.to_csv(argv.file + ".csv", index=False)
 
     with open("alias.pk", 'wb') as file:
