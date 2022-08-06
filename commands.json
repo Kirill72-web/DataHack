@@ -1,7 +1,6 @@
 {
   "example": {
     "string": "string (['e', 'd', 'f'], 4)",
-    "wchoice": "weight_choice (['hello', 'hi'], [80, 20])"
   },
   "nex_table": {
     "some_field": "data_type argument"

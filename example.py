@@ -8,6 +8,6 @@ class Table:
     float = Float((1, 10), alias="hello_world")
     integer = Integer((1, 10))
     wchoice = WeighedChoice((['123', '456', 'hello'], [10, 20, 70]))
-    date = DateTime(("2022-10-07 19:45:30", "2022-10-12 19:45:30", False))
-    timestep = DateTime(("2022-10-07 19:45:30", "2022-10-12 19:45:30", True))
+    date = Date(("2022-10-07", "2022-10-12"))
+    timestep = TimeStep(("2022-10-07 19:45:30", "2022-10-12 19:45:30"))
     a = Alias("hello_world")

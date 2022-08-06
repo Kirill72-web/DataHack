@@ -10,6 +10,7 @@ if __name__ == "__main__":
     parser.add_argument("--file", '-f', required=True)
     parser.add_argument("--row", '-r', required=False, default=1000)
     parser.add_argument("--json", '-j', required=False)
+    parser.add_argument("--preset", '-p', required=False)
 
     argv = parser.parse_args()
     ALIAS_LIST = init()
@@ -31,10 +32,20 @@ if __name__ == "__main__":
     fields = list(filter(lambda x: x[0] != "_", dir(table)))
     output = pd.DataFrame(columns=fields, index=range(row_count))
     save = {}
-    print("=======Logging Info=======")
 
+    if argv.preset:
+        preset = pd.read_csv(argv.preset) if ".csv" in argv.preset else pd.read_excel(argv.preset)
+        columns_preset = preset.columns
+    else:
+        columns_preset = {}
+
+    print("=======Logging Info=======")
     for field in fields:
-        if field in current_table:
+        if field in columns_preset:
+            print(field, type(getattr(table, field)), getattr(table, field).default)
+            output[field] = preset[field].copy()
+
+        elif field in current_table:
             cmd = current_table[field]
             data_type = cmd[:cmd.find(" ")]
             argument = cmd[cmd.find(" ") + 1:]
@@ -81,7 +92,7 @@ if __name__ == "__main__":
                     output[field] = WeighedChoice(default=argument).generate(row_count)
 
             elif data_type == "alias":
-                print(field, Alias, save[field])
+                print(field, Alias, argument)
                 save[field] = argument
 
         else:
