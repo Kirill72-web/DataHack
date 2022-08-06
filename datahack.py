@@ -48,9 +48,9 @@ class String(DataType):
     def generate(self, row_count):
         if self.default:
             symbols = self.default[0]
-            return [''.join(str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(self.default[1])])
+            return [''.join(
+                str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(self.default[1])])
                     for w in range(row_count)]
-
 
 
 class SetChoice(DataType):
@@ -71,9 +71,9 @@ class Mask(DataType):
         for i in range(len(mask)):
             if mask[i] == "#":
                 if self.default[1] and self.default[2]:
-                    mask = mask[:i]+str(np.random.choice(self.alphabet + self.digits))+mask[i+1:]
+                    mask = mask[:i] + str(np.random.choice(self.alphabet + self.digits)) + mask[i + 1:]
                 elif self.default[1]:
-                    mask = mask[:i]+str(np.random.choice(self.digits))+mask[i+1:]
+                    mask = mask[:i] + str(np.random.choice(self.digits)) + mask[i + 1:]
                 else:
-                    mask = mask[:i]+str(np.random.choice(self.alphabet))+mask[i+1:]
+                    mask = mask[:i] + str(np.random.choice(self.alphabet)) + mask[i + 1:]
         return mask
