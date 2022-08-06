@@ -10,7 +10,6 @@ if __name__ == "__main__":
     parser.add_argument("--file", '-f', required=True)
     parser.add_argument("--row", '-r', required=False, default=1000)
     parser.add_argument("--json", '-j', required=False)
-    parser.add_argument("--preset", '-p', required=False)
 
     argv = parser.parse_args()
     ALIAS_LIST = init()
@@ -31,6 +30,8 @@ if __name__ == "__main__":
 
     fields = list(filter(lambda x: x[0] != "_", dir(table)))
     output = pd.DataFrame(columns=fields, index=range(row_count))
+    save = {}
+    print("=======Logging Info=======")
 
     for field in fields:
         if field in current_table:
@@ -40,6 +41,7 @@ if __name__ == "__main__":
             argument = eval(argument)
 
             if data_type == "float":
+                print(field, type(Float("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Float(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
@@ -47,6 +49,7 @@ if __name__ == "__main__":
                     output[field] = Float(default=argument).generate(row_count)
 
             elif data_type == "integer":
+                print(field, type(Integer("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Integer(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
@@ -54,6 +57,7 @@ if __name__ == "__main__":
                     output[field] = Integer(default=argument).generate(row_count)
 
             elif data_type == "string":
+                print(field, type(String("")), argument)
                 if getattr(table, field).alias:
                     output[field] = String(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
@@ -61,20 +65,34 @@ if __name__ == "__main__":
                     output[field] = String(default=argument).generate(row_count)
 
             elif data_type == "set_choice":
+                print(field, type(SetChoice("")), argument)
                 if getattr(table, field).alias:
                     output[field] = SetChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
                     output[field] = SetChoice(default=argument).generate(row_count)
 
+            elif data_type == "weight_choice":
+                print(field, type(WeighedChoice("")), argument)
+                if getattr(table, field).alias:
+                    output[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = WeighedChoice(default=argument).generate(row_count)
+
             elif data_type == "alias":
-                output[field] = Alias(default=argument).generate(row_count)
+                save[field] = argument
+                print(field, type(Alias("")), argument)
 
         else:
+            print(field, type(getattr(table, field)), getattr(table, field).default)
+            if type(getattr(table, field)) == Alias:
+                save[field] = getattr(table, field).default
             output[field] = getattr(table, field).generate(row_count)
             if not getattr(table, field).alias is None:
                 ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
 
+    print("=======Logging Finished=======")
     # output.to_parquet(argv.file+".parquet", index=False)
     output.to_csv(argv.file + ".csv", index=False)
 
