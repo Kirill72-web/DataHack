@@ -1,0 +1,9 @@
+{
+  "table_name": {
+    "first_name": "number (10, 100)",
+    "another_field": "something"
+  },
+  "nex_table": {
+    "some_field": "another"
+  }
+}
