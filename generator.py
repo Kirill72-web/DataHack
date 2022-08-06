@@ -18,7 +18,10 @@ if __name__ == "__main__":
         current_table = {}
     else:
         commands = json.load(open(argv.json, 'r'))
-        current_table = commands[argv.file]
+        if argv.file in commands:
+            current_table = commands[argv.file]
+        else:
+            current_table = {}
 
     row_count = int(argv.row)
 
@@ -34,8 +37,31 @@ if __name__ == "__main__":
             data_type = cmd[:cmd.find(" ")]
             argument = cmd[cmd.find(" ") + 1:]
             argument = eval(argument)
+
             if data_type == "number":
-                output[field] = Number(default=argument).generate(row_count)
+                if getattr(table, field).alias:
+                    output[field] = Number(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = Number(default=argument).generate(row_count)
+
+            elif data_type == "string":
+                if getattr(table, field).alias:
+                    output[field] = String(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = String(default=argument).generate(row_count)
+
+            elif data_type == "set_choice":
+                if getattr(table, field).alias:
+                    output[field] = SetChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = SetChoice(default=argument).generate(row_count)
+
+            elif data_type == "alias":
+                output[field] = Alias(default=argument).generate(row_count)
+
         else:
             output[field] = getattr(table, field).generate(row_count)
             if not getattr(table, field).alias is None:

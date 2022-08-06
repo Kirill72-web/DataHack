@@ -1,6 +1,6 @@
 {
   "example": {
-    "first_number": "number (10, 100)"
+    "string": "string (['e', 'd', 'f'], 4)"
   },
   "nex_table": {
     "some_field": "data_type argument"

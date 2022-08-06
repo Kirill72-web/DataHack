@@ -2,6 +2,8 @@ from datahack import *
 
 
 class Table:
-
-    first_number = Number(default=(1, 10), alias="hello_world")
-    second_number = Alias(default='hello_world')
+    string = String((['a', 'b', 'c'], 2))
+    choice = SetChoice(['123', 456, 'hello'])
+    mask = Mask(["123##456#", True, True])
+    number = Number((1, 10), alias="hello_world")
+    something = Alias("hello_world")
