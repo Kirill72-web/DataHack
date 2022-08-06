@@ -10,6 +10,7 @@ if __name__ == "__main__":
     parser.add_argument("--file", '-f', required=True)
     parser.add_argument("--row", '-r', required=False, default=1000)
     parser.add_argument("--json", '-j', required=False)
+    parser.add_argument("--preset", '-p', required=False)
 
     argv = parser.parse_args()
     ALIAS_LIST = init()
@@ -38,12 +39,19 @@ if __name__ == "__main__":
             argument = cmd[cmd.find(" ") + 1:]
             argument = eval(argument)
 
-            if data_type == "number":
+            if data_type == "float":
                 if getattr(table, field).alias:
-                    output[field] = Number(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    output[field] = Float(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
-                    output[field] = Number(default=argument).generate(row_count)
+                    output[field] = Float(default=argument).generate(row_count)
+
+            elif data_type == "integer":
+                if getattr(table, field).alias:
+                    output[field] = Integer(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = Integer(default=argument).generate(row_count)
 
             elif data_type == "string":
                 if getattr(table, field).alias:

@@ -25,7 +25,13 @@ class DataType(ABC):
         self.alias = alias
 
 
-class Number(DataType):
+class Integer(DataType):
+
+    def generate(self, row_count):
+        return [np.random.randint(self.default[0], self.default[1]) for i in range(row_count)]
+
+
+class Float(DataType):
 
     def generate(self, row_count):
         return [np.random.uniform(self.default[0], self.default[1]) for i in range(row_count)]
@@ -40,10 +46,11 @@ class Alias(DataType):
 class String(DataType):
 
     def generate(self, row_count):
-        symbols = self.default[0]
-        l = len(symbols)
-        return [''.join(str(x) for x in [symbols[np.random.randint(0, l, 1)[0]] for j in range(self.default[1])])
-                for w in range(row_count)]
+        if self.default:
+            symbols = self.default[0]
+            return [''.join(str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(self.default[1])])
+                    for w in range(row_count)]
+
 
 
 class SetChoice(DataType):
