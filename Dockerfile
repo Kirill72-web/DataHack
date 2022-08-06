@@ -14,3 +14,5 @@ RUN apt-get install -y python3-pip
 RUN pip3 install numpy
 RUN pip3 install pandas
 RUN pip3 install spark
+RUN pip3 install xlwt
+RUN pip3 install xlrd

@@ -8,7 +8,7 @@ import pickle
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Run generator')
     parser.add_argument("--file", '-f', required=True)
-    parser.add_argument("--row", '-r', required=False, default=1000)
+    parser.add_argument("--row", '-r', required=False, default=10000)
     parser.add_argument("--json", '-j', required=False)
     parser.add_argument("--preset", '-p', required=False)
 
