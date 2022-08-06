@@ -50,7 +50,10 @@ class SetChoice(DataType):
 
     def generate(self, row_count):
         return [np.random.choice(self.default) for i in range(row_count)]
+class WeighedChoice(DataType):#Вероятности - числа сумма которых равна 100, вероятностей должно быть столько же, сколько вариантов
+    def generate(self, row_count):
 
+        return [np.random.choice(self.default[0], p=list(map(lambda x: x/100, self.default[1]))) for i in range(row_count)]
 
 class Mask(DataType):
     alphabet = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't',

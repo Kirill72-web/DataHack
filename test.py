@@ -21,6 +21,3 @@ elif ' '.join(os.listdir()).find('example.csv') == -1 and flag1:
 
 if flag1:
     print('Test 1: Done, time:', delta)
-
-
-
