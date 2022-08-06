@@ -58,18 +58,14 @@ class Mask(DataType):
     digits = [i for i in range(10)]
 
     def generate(self, row_count):
-        mask = self.default[0]
-        ifInt = self.default[1]
-        ifStr = self.default[2]
+        return [self.get_string(self.default[0]) for j in range(row_count)]
 
-        return [self.get_string(mask, ifInt, ifStr) for j in range(row_count)]
-
-    def get_string(self, mask, ifInt, ifStr):
+    def get_string(self, mask):
         for i in range(len(mask)):
             if mask[i] == "#":
-                if ifInt and ifStr:
+                if self.default[1] and self.default[2]:
                     mask = mask[:i]+str(np.random.choice(self.alphabet + self.digits))+mask[i+1:]
-                elif ifInt:
+                elif self.default[1]:
                     mask = mask[:i]+str(np.random.choice(self.digits))+mask[i+1:]
                 else:
                     mask = mask[:i]+str(np.random.choice(self.alphabet))+mask[i+1:]
