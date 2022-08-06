@@ -1,7 +1,6 @@
 {
-  "table_name": {
-    "first_name": "number (10, 100)",
-    "another_field": "something"
+  "example": {
+    "first_number": "number (10, 100)"
   },
   "nex_table": {
     "some_field": "another"
