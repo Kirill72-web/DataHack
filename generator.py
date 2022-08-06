@@ -81,16 +81,20 @@ if __name__ == "__main__":
                     output[field] = WeighedChoice(default=argument).generate(row_count)
 
             elif data_type == "alias":
+                print(field, Alias, save[field])
                 save[field] = argument
-                print(field, type(Alias("")), argument)
 
         else:
             print(field, type(getattr(table, field)), getattr(table, field).default)
             if type(getattr(table, field)) == Alias:
                 save[field] = getattr(table, field).default
-            output[field] = getattr(table, field).generate(row_count)
-            if not getattr(table, field).alias is None:
-                ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+            else:
+                output[field] = getattr(table, field).generate(row_count)
+                if not getattr(table, field).alias is None:
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+
+    for field in save.keys():
+        output[field] = Alias(save[field]).generate(row_count)
 
     print("=======Logging Finished=======")
     # output.to_parquet(argv.file+".parquet", index=False)

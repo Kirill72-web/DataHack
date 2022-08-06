@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 import numpy as np
 import os.path
 import pickle
+import time
+import random
 
 ALIAS_LIST = {}
 
@@ -84,3 +86,27 @@ class Mask(DataType):
                 else:
                     mask = mask[:i] + str(np.random.choice(self.alphabet)) + mask[i + 1:]
         return mask
+
+
+class DateTime(DataType):
+
+    def random_date(self, start, end, prop):
+        return self.str_time_prop(start, end, '%Y-%m-%d %H:%M:%S', prop)
+
+    def str_time_prop(self, start, end, time_format, prop):
+        stime = time.mktime(time.strptime(start, time_format))
+        etime = time.mktime(time.strptime(end, time_format))
+        ptime = stime + prop * (etime - stime)
+        return time.strftime(time_format, time.localtime(ptime))
+
+    def generate(self, row_count):
+        if self.default:
+            if self.default[2]:
+                return [self.random_date(self.default[0], self.default[1], random.random()) for i in range(row_count)]
+            else:
+                answer = []
+                for i in range(row_count):
+                    output = self.random_date(self.default[0], self.default[1], random.random())
+                    output = output[:output.find(" ")]
+                    answer.append(output)
+                return answer
