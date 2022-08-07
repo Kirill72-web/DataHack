@@ -34,7 +34,7 @@ if __name__ == "__main__":
     save = {}
 
     if argv.preset:
-        preset = pd.read_csv(argv.preset) if ".csv" in argv.preset else pd.read_excel(argv.preset)
+        preset = pd.read_csv(argv.preset) if ".csv" in argv.preset else pd.read_excel(argv.preset, engine='openpyxl')
         columns_preset = preset.columns
     else:
         columns_preset = {}
@@ -133,8 +133,6 @@ if __name__ == "__main__":
 
     print("=======Logging Finished=======")
     output.to_parquet(argv.file+".parquet", index=False)
-    output.to_csv(argv.file + ".csv", index=False)
-
     with open("alias.pk", 'wb') as file:
         pickle.dump(ALIAS_LIST, file)
 
