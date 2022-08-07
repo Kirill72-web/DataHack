@@ -55,7 +55,7 @@ class String(DataType):
                 for w in range(row_count)]
         else:
             return [''.join(str(x) for x in
-                             [self.default[np.random.randint(0, len(self.default), 1)[0]] for j in range(np.random.randint(1, 100, 1)[0])])
+                             [self.default[np.random.randint(0, len(self.default), 1)[0]] for j in range(np.random.randint(1, 20, 1)[0])])
                      for w in range(row_count)]
 
 class SetChoice(DataType):
