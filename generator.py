@@ -91,6 +91,30 @@ if __name__ == "__main__":
                 else:
                     output[field] = WeighedChoice(default=argument).generate(row_count)
 
+            elif data_type == "mask":
+                print(field, type(Mask("")), argument)
+                if getattr(table, field).alias:
+                    output[field] = Mask(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = Mask(default=argument).generate(row_count)
+
+            elif data_type == "date":
+                print(field, type(Date("")), argument)
+                if getattr(table, field).alias:
+                    output[field] = Date(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = Date(default=argument).generate(row_count)
+
+            elif data_type == "timestep":
+                print(field, type(TimeStep("")), argument)
+                if getattr(table, field).alias:
+                    output[field] = TimeStep(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
+                else:
+                    output[field] = TimeStep(default=argument).generate(row_count)
+
             elif data_type == "alias":
                 print(field, Alias, argument)
                 save[field] = argument

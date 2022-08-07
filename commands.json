@@ -1,6 +1,14 @@
 {
   "example": {
     "string": "string (['e', 'd', 'f'], 4)",
+    "choice": "set_choice ['test', 'work', 'world']",
+    "mask": "mask ['1#2#3#4#', True, True]",
+    "float" : "float (10, 12)",
+    "integer": "integer (10, 12)",
+    "wchoice" : "weight_choice (['test', 'work', 'world'], [20, 40, 40])",
+    "date": "date ('2022-10-10', '2022-10-29')",
+    "timestep": "timestep ('2022-10-07 19:45:30', '2022-10-12 19:45:30')",
+    "a": "alias 'mask_alias'"
   },
   "nex_table": {
     "some_field": "data_type argument"

@@ -4,3 +4,4 @@ argparse~=1.4.0
 spark
 xlrd
 xlwt
+fastparquet
