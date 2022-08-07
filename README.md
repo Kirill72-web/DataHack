@@ -5,11 +5,11 @@ Solution of case #2 of the Dotahack hackathon, on the development of a system fo
 ## How to use
 If you plan to use the project locally, then after downloading the repository, it is enough to start installing dependencies from requirements.txt 
 
-``` pip install -r requirements.txt```
+``` pip3 install -r requirements.txt```
 
 and work with the script generator.py.
 
-```python generator.py -f file_name_without_.py [-r row_count] [-j path_to_json_file] [-p path_to_preset_data_in_csv/excel]```
+```python3.9 generator.py -f file_name_without_.py [-r row_count] [-j path_to_json_file] [-p path_to_preset_data_in_csv/excel]```
 
 If a docker scan is required, it is enough to download Dockerfile and run the docker build.
 
