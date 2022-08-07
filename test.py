@@ -52,7 +52,7 @@ def testTypes(info, table):
                 print(f"Test of {i} Done")
             else:
                 print(f"Test of {i} Failed")
-        elif i == 'TimeStep':
+        elif i == 'TimeStemp':
             if tsTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1]):
                 print(f"Test of {i} Done")
             else:
@@ -163,28 +163,28 @@ def tableShape(table, info):
 
 
 print('all data types with out json')
-info = run(['python3.9', 'generator.py', '-f', 'example', '-r', '10000'])
+info = run(['python', 'generator.py', '-f', 'example', '-r', '10000'])
 table = pd.read_parquet('example.parquet')
 tableShape(table, info)
 testTypes(info, table)
 print('not all data types with out json')
-info = run(['python3.9', 'generator.py', '-f', 'example2', '-r', '10000'])
+info = run(['python', 'generator.py', '-f', 'example2', '-r', '10000'])
 table = pd.read_parquet('example2.parquet')
 tableShape(table, info)
 testTypes(info, table)
 print('all data types overridden in json')
-info = run(['python3.9', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands.json'])
+info = run(['python', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands.json'])
 table = pd.read_parquet('example.parquet')
 tableShape(table, info)
 testTypes(info, table)
 print('not all data types overridden in json')
-info = run(['python3.9', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands2.json'])
+info = run(['python', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands2.json'])
 table = pd.read_parquet('example.parquet')
 tableShape(table, info)
 testTypes(info, table)
 print('join key test')
-info1 = run(['python3.9', 'generator.py', '-f', 'example_join', '-r', '10000'])
-info2 = run(['python3.9', 'generator.py', '-f', 'example_join_s', '-r', '10000'])
+info1 = run(['python', 'generator.py', '-f', 'example_join', '-r', '10000'])
+info2 = run(['python', 'generator.py', '-f', 'example_join_s', '-r', '10000'])
 table = pd.read_parquet('example_join.parquet')
 table2 = pd.read_parquet('example_join_s.parquet')
 tableShape(table, info1)
@@ -203,8 +203,8 @@ try:
 except:
     print('Test of key Failed')
 print('join key test by 3')
-info1 = run(['python3.9', 'generator.py', '-f', 'example_join_by_3_col', '-r', '10000'])
-info2 = run(['python3.9', 'generator.py', '-f', 'example_join_by_3_col_s', '-r', '10000'])
+info1 = run(['python', 'generator.py', '-f', 'example_join_by_3_col', '-r', '10000'])
+info2 = run(['python', 'generator.py', '-f', 'example_join_by_3_col_s', '-r', '10000'])
 table = pd.read_parquet('example_join_by_3_col.parquet')
 table2 = pd.read_parquet('example_join_by_3_col_s.parquet')
 tableShape(table, info1)
@@ -223,7 +223,7 @@ try:
 except:
     print('Test of keys by 3 cols Failed')
 print('load preset csv')
-info = run(['python3.9', 'generator.py', '-f', 'example_load', '-r', '10000', '-j', 'commands.json', '-p', 'example.csv'])
+info = run(['python', 'generator.py', '-f', 'example_load', '-r', '10000', '-j', 'commands.json', '-p', 'example.csv'])
 table = pd.read_parquet('example_load.parquet')
 testTypes(info, table)
 preset = pd.read_csv('example.csv')
@@ -233,7 +233,7 @@ for i in preset.columns:
     else:
         print(f'Test of column {i} Failed')
 print('load preset excel')
-info = run(['python3.9', 'generator.py', '-f', 'example_load', '-r', '10000', '-j', 'commands.json', '-p', 'example.xlsx'])
+info = run(['python', 'generator.py', '-f', 'example_load', '-r', '10000', '-j', 'commands.json', '-p', 'example.xlsx'])
 table = pd.read_parquet('example_load.parquet')
 tableShape(table, info)
 preset = pd.read_excel('example.xlsx', engine='openpyxl')

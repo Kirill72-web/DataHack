@@ -116,14 +116,14 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = Date(default=argument)
 
             elif data_type == "timestep":
-                print(field, type(TimeStep("")), argument)
+                print(field, type(TimeStemp("")), argument)
                 if getattr(table, field).alias:
-                    output[field] = TimeStep(default=argument, alias=getattr(table, field).alias).generate(row_count)
-                    all_field[field] = TimeStep(default=argument, alias=getattr(table, field).alias)
+                    output[field] = TimeStemp(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    all_field[field] = TimeStemp(default=argument, alias=getattr(table, field).alias)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
-                    output[field] = TimeStep(default=argument).generate(row_count)
-                    all_field[field] = TimeStep(default=argument)
+                    output[field] = TimeStemp(default=argument).generate(row_count)
+                    all_field[field] = TimeStemp(default=argument)
 
             elif data_type == "alias":
                 print(field, Alias, argument)
@@ -167,4 +167,6 @@ if __name__ == "__main__":
 
     output = generate(argv.file, int(argv.row), argv.json, argv.preset)
     output.to_parquet(argv.file + ".parquet", index=False)
+    output.to_csv(argv.file + ".csv", index=False)
+
 

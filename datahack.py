@@ -98,7 +98,7 @@ def str_time_prop(start, end, time_format, prop):
     return time.strftime(time_format, time.localtime(ptime))
 
 
-class TimeStep(DataType):
+class TimeStemp(DataType):
 
     def random_date(self, start, end, prop):
         return str_time_prop(start, end, '%Y-%m-%d %H:%M:%S', prop)
