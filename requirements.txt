@@ -1,6 +1,6 @@
-pandas~=1.4.3
-numpy~=1.23.1
-argparse~=1.4.0
+pandas
+numpy
+argparse
 spark
 xlrd
 xlwt
