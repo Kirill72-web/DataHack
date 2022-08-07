@@ -1,6 +1,6 @@
 # DataHack
 
-Solution of case #2 of the Dotahack hackathon, on the development of a system for generating synthetic data.
+Solution of case #2 of the Datahack hackathon, on the development of a system for generating synthetic data.
 
 ## How to use
 If you plan to use the project locally, then after downloading the repository, it is enough to start installing dependencies from requirements.txt 
