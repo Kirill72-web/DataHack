@@ -2,7 +2,7 @@ pandas
 numpy
 argparse
 spark
-pyspark[sql]
+pyspark
 xlrd
 xlwt
 fastparquet

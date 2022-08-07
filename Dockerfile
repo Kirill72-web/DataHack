@@ -11,13 +11,13 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get install -y software-properties-common
 RUN add-apt-repository ppa:deadsnakes/ppa
 RUN apt-get install -y python3.9
+
+RUN apt remove -y python3.10
+
 RUN apt-get install -y python3-pip
 
 RUN git clone https://github.com/Kirill72-web/DataHack.git
 WORKDIR DataHack
 
-RUN pip3 install -r requirements.txt
-RUN pip3 install numpy
-RUN pip3 install pandas
-RUN pip3 install spark
-RUN pip3 install
+RUN /usr/local/bin/python3.9 -m pip install -r requirements.txt
+
