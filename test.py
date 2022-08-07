@@ -18,13 +18,17 @@ def getInfo(text):
 
 
 def choiceTest(col, un):
-    if len(col) == len(unique):
-        return (col.unique().astype(str) == np.asarray(un)).all()
+    if len(col.unique()) == len(un):
+        return col.unique().tolist() in np.asarray(un)
     return False
 
 def wchoiceTest(col, un, unw, rows):
-    if len(col.unique()) == len(un) and len(un) == unw:
-        return ((col.value_counts() / 1000 * 100 > np.array(sorted(unw, reverse=True))-5) & (col.value_counts() / 1000 * 100 < np.array(sorted(unw, reverse=True))+5)).all()
+    if len(col.value_counts()) == len(un) and len(un) == len(unw):
+        col = col.value_counts() / rows * 100
+        for i in range(len(un)):
+            if col[i] < float(sorted(unw, reverse=True)[i]) -5 and col[i] > float(sorted(unw, reverse=True)[i]) + 5:
+                return False
+        return True
     return False
 
 def floatTest(col, min, max):
@@ -35,13 +39,13 @@ def intTest(col, min, max):
 
 def stringTest(col, symbols, maxLen=False):
     if maxLen:
-        boolList = [el for el in col if len(el)!=maxLen or len([x for x in el if x not in symbols]) != 0]
-        if len(boolList) != 0:
+        boolList = [el for el in col if len(el) != maxLen or len([x for x in el if x not in symbols]) != 0]
+        if not boolList:
             return False
         return True
     else:
-        boolList = [el for el in col if len(el)>100 or len([x for x in el if x not in symbols]) != 0]
-        if len(boolList) != 0:
+        boolList = [el for el in col if len(el) > 100 or len([x for x in el if x not in symbols]) != 0]
+        if not boolLists:
             return False
         return True
 
@@ -104,7 +108,7 @@ else:
     print("Test 3: Failed: not all rows")
 
 
-for i, ind in enumerate(info[:, 1]):
+for ind, i in enumerate(info[:, 1]):
     if i == 'SetChoice':
         if choiceTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')):
             print(f"Test of {i} Done")
@@ -131,7 +135,8 @@ for i, ind in enumerate(info[:, 1]):
         else:
             print(f"Test of {i} Failed")
     elif i == 'String':
-        if stringTest(table[info[ind][0]], info[ind][2].replace('[', '').split(']')[0].split(','), int(info[ind][2].replace('[', '').split(']')[1])):
+
+        if stringTest(table[info[ind][0]], info[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
@@ -141,7 +146,7 @@ for i, ind in enumerate(info[:, 1]):
         else:
             print(f"Test of {i} Failed")
     elif i == 'WeighedChoice':
-        if wchoiceTest(table[info[ind][0]], info[ind][2].split('],[')[0].replace('[', '').split(','), info[ind][2].split('],[')[1].replace('}', '').split(','), 10000):
+        if wchoiceTest(table[info[ind][0]], info[ind][2].split(' ')[0].split(','), info[ind][2].split(' ')[1].split(','), 10000):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
