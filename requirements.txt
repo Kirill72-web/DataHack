@@ -5,3 +5,5 @@ spark
 pyspark[sql]
 xlrd
 xlwt
+fastparquet
+openpyxl

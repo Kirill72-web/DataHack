@@ -17,3 +17,7 @@ RUN git clone https://github.com/Kirill72-web/DataHack.git
 WORKDIR DataHack
 
 RUN pip3 install -r requirements.txt
+RUN pip3 install numpy
+RUN pip3 install pandas
+RUN pip3 install spark
+RUN pip3 install

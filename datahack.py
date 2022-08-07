@@ -48,12 +48,15 @@ class Alias(DataType):
 class String(DataType):
 
     def generate(self, row_count):
-        if self.default:
+        if type(self.default[1]) == int:
             symbols = self.default[0]
             return [''.join(
-                str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(self.default[1])])
+                str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(int(self.default[1]))])
                 for w in range(row_count)]
-
+        else:
+            return [''.join(str(x) for x in
+                             [self.default[np.random.randint(0, len(self.default), 1)[0]] for j in range(np.random.randint(1, 20, 1)[0])])
+                     for w in range(row_count)]
 
 class SetChoice(DataType):
 
