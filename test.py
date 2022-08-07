@@ -102,7 +102,7 @@ if len(table.columns) == len(info[:, 0]):
 else:
     print("Test 2: Failed: not all columns")
 
-if len(table[table.columns]) == 10000:
+if len(table[table.columns[0]]) == 10000:
     print("Test 3: Done")
 else:
     print("Test 3: Failed: not all rows")
@@ -178,7 +178,7 @@ if len(table.columns) == len(info[:, 0]):
 else:
     print("Test 2: Failed: not all columns")
 
-if len(table[table.columns]) == 10000:
+if len(table[table.columns[0]]) == 10000:
     print("Test 3: Done")
 else:
     print("Test 3: Failed: not all rows")
@@ -254,7 +254,7 @@ if len(table.columns) == len(info[:, 0]):
 else:
     print("Test 2: Failed: not all columns")
 
-if len(table[table.columns]) == 10000:
+if len(table[table.columns[0]]) == 10000:
     print("Test 3: Done")
 else:
     print("Test 3: Failed: not all rows")
@@ -330,7 +330,7 @@ if len(table.columns) == len(info[:, 0]):
 else:
     print("Test 2: Failed: not all columns")
 
-if len(table[table.columns]) == 10000:
+if len(table[table.columns[0]]) == 10000:
     print("Test 3: Done")
 else:
     print("Test 3: Failed: not all rows")
@@ -378,3 +378,276 @@ for ind, i in enumerate(info[:, 1]):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
+
+print('join key test')
+flag1 = True
+start = time.time()
+process1 = subprocess.run(['python', 'generator.py', '-f', 'example_join', '-r', '10000'], capture_output=True)
+process2 = subprocess.run(['python', 'generator.py', '-f', 'example_join_s', '-r', '10000'], capture_output=True)
+delta = time.time() - start
+
+if process1.stderr or process2.stderr :
+    print('Test 1: Failed:\n', process.stderr if process1.stderr else process2.stderr )
+    flag1 = False
+    exit()
+elif ' '.join(os.listdir()).find('example_join.parquet') == -1 and ' '.join(os.listdir()).find('example_join_s.parquet') == -1 and flag1:
+    print('Test 1: Failed:\n', 'file not generated')
+    flag1 = False
+    exit()
+
+if flag1:
+    print('Test 1: Done, time:', delta)
+
+info1 = process1.stdout.decode('utf-8').split('\r\n')
+del info1[0], info1[-1], info1[-1]
+info1 = np.asarray(list(map(getInfo, info1)))
+table = pd.read_parquet('example_join.parquet')
+info2 = process2.stdout.decode('utf-8').split('\r\n')
+del info2[0], info2[-1], info2[-1]
+info2 = np.asarray(list(map(getInfo, info2)))
+table2 = pd.read_parquet('example_join.parquet')
+if len(table.columns) == len(info1[:, 0]) and len(table2.columns) == len(info2[:, 0]):
+    print("Test 2: Done")
+else:
+    print("Test 2: Failed: not all columns")
+
+if len(table[table.columns[0]]) == 10000 and len(table2[table2.columns[0]]) == 10000:
+    print("Test 3: Done")
+else:
+    print("Test 3: Failed: not all rows")
+
+for ind, i in enumerate(info1[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table[info1[ind][0]], info1[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table[info1[ind][0]], info1[ind][2].split(',')[0], info1[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table[info1[ind][0]], float(info1[ind][2].split(',')[0]), float(info1[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table[info1[ind][0]], int(info1[ind][2].split(',')[0]), int(info1[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table[info1[ind][0]], info1[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table[info1[ind][0]], info1[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info1[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table[info1[ind][0]], info1[ind][2].split(',')[0], info1[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table[info1[ind][0]], info1[ind][2].split(' ')[0].split(','), info1[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+for ind, i in enumerate(info2[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table2[info2[ind][0]], info2[ind][2].split(',')[0], info2[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table2[info2[ind][0]], float(info2[ind][2].split(',')[0]), float(info2[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table2[info2[ind][0]], int(info2[ind][2].split(',')[0]), int(info2[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info2[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table2[info2[ind][0]], info2[ind][2].split(',')[0], info2[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table2[info2[ind][0]], info2[ind][2].split(' ')[0].split(','), info2[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+key_1 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
+key_2 = np.asarray([[name, arg_]  for name, type_, arg_ in info1 if type_ == "Alias" ])
+if len(key_1[:, 0]) == len(key_2[:, 0]):
+    print("Test 4 Done")
+else:
+    print("Test 4 Failed: not all keys genered")
+flag2 = True
+for i in range(len(key_1[:, 1])):
+    for j in range(len(key_2[:, 1])):
+        if key_1[:, 1][i] == key_1[:, 1][j]:
+            if table[key_1[:, 0][i]].compare(table[key_1[:, 0][i]]).empty:
+                print(f"Test of {key_1[:, 1][i]} Done")
+                flag2 = False
+if flag2:
+    print('Test of keys Failed')
+print('join key test')
+flag1 = True
+start = time.time()
+process1 = subprocess.run(['python', 'generator.py', '-f', 'example_join', '-r', '10000'], capture_output=True)
+process2 = subprocess.run(['python', 'generator.py', '-f', 'example_join_s', '-r', '10000'], capture_output=True)
+delta = time.time() - start
+
+if process1.stderr or process2.stderr :
+    print('Test 1: Failed:\n', process.stderr if process1.stderr else process2.stderr )
+    flag1 = False
+    exit()
+elif ' '.join(os.listdir()).find('example_join_by_3_col_s.parquet') == -1 and ' '.join(os.listdir()).find('example_join_by_3_col.parquet') == -1 and flag1:
+    print('Test 1: Failed:\n', 'file not generated')
+    flag1 = False
+    exit()
+
+if flag1:
+    print('Test 1: Done, time:', delta)
+
+info1 = process1.stdout.decode('utf-8').split('\r\n')
+del info1[0], info1[-1], info1[-1]
+info1 = np.asarray(list(map(getInfo, info1)))
+table = pd.read_parquet('example_join_by_3_col.parquet')
+info2 = process2.stdout.decode('utf-8').split('\r\n')
+del info2[0], info2[-1], info2[-1]
+info2 = np.asarray(list(map(getInfo, info2)))
+table2 = pd.read_parquet('example_join_by_3_col_s.parquet')
+if len(table.columns) == len(info1[:, 0]) and len(table2.columns) == len(info2[:, 0]):
+    print("Test 2: Done")
+else:
+    print("Test 2: Failed: not all columns")
+
+if len(table[table.columns[0]]) == 10000 and len(table2[table2.columns[0]]) == 10000:
+    print("Test 3: Done")
+else:
+    print("Test 3: Failed: not all rows")
+
+for ind, i in enumerate(info1[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table[info1[ind][0]], info1[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table[info1[ind][0]], info1[ind][2].split(',')[0], info1[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table[info1[ind][0]], float(info1[ind][2].split(',')[0]), float(info1[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table[info1[ind][0]], int(info1[ind][2].split(',')[0]), int(info1[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table[info1[ind][0]], info1[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table[info1[ind][0]], info1[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info1[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table[info1[ind][0]], info1[ind][2].split(',')[0], info1[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table[info1[ind][0]], info1[ind][2].split(' ')[0].split(','), info1[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+for ind, i in enumerate(info2[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table2[info2[ind][0]], info2[ind][2].split(',')[0], info2[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table2[info2[ind][0]], float(info2[ind][2].split(',')[0]), float(info2[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table2[info2[ind][0]], int(info2[ind][2].split(',')[0]), int(info2[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info2[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table2[info2[ind][0]], info2[ind][2].split(',')[0], info2[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table2[info2[ind][0]], info2[ind][2].split(' ')[0].split(','), info2[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+key_1 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
+key_2 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
+if len(key_1[:, 0]) == len(key_2[:, 0]):
+    print("Test 4 Done")
+else:
+    print("Test 4 Failed: not all keys genered")
+flag2 = True
+for i in range(len(key_1[:, 1])):
+    for j in range(len(key_2[:, 1])):
+        if key_1[:, 1][i] == key_1[:, 1][j]:
+            if table[key_1[:, 0][i]].compare(table[key_1[:, 0][i]]).empty:
+                print(f"Test of {key_1[:, 1][i]} Done")
+                flag2 = False
+if flag2:
+    print('Test of keys by 3 cols Failed')
