@@ -74,10 +74,238 @@ def maskTest(col, mask):
         if i.find('#') != -1 and len(mask) != len(i):
             return False
     return True
-
+print('all data types with out json')
 flag1 = True
 start = time.time()
 process = subprocess.run(['python', 'generator.py', '-f', 'example', '-r', '10000'], capture_output=True)
+delta = time.time() - start
+
+if process.stderr:
+    print('Test 1: Failed:\n', process.stderr)
+    flag1 = False
+    exit()
+elif ' '.join(os.listdir()).find('example.parquet') == -1 and flag1:
+    print('Test 1: Failed:\n', 'file not generated')
+    flag1 = False
+    exit()
+
+if flag1:
+    print('Test 1: Done, time:', delta)
+
+info = process.stdout.decode('utf-8').split('\r\n')
+del info[0], info[-1], info[-1]
+info = np.asarray(list(map(getInfo, info)))
+table = pd.read_parquet('example.parquet')
+
+if len(table.columns) == len(info[:, 0]):
+    print("Test 2: Done")
+else:
+    print("Test 2: Failed: not all columns")
+
+if len(table[table.columns]) == 10000:
+    print("Test 3: Done")
+else:
+    print("Test 3: Failed: not all rows")
+
+
+for ind, i in enumerate(info[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table[info[ind][0]], float(info[ind][2].split(',')[0]), float(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table[info[ind][0]], int(info[ind][2].split(',')[0]), int(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table[info[ind][0]], info[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1] ):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table[info[ind][0]], info[ind][2].split(' ')[0].split(','), info[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+print('not all data types with out json')
+flag1 = True
+start = time.time()
+process = subprocess.run(['python', 'generator.py', '-f', 'example2', '-r', '10000'], capture_output=True)
+delta = time.time() - start
+
+if process.stderr:
+    print('Test 1: Failed:\n', process.stderr)
+    flag1 = False
+    exit()
+elif ' '.join(os.listdir()).find('example2.parquet') == -1 and flag1:
+    print('Test 1: Failed:\n', 'file not generated')
+    flag1 = False
+    exit()
+
+if flag1:
+    print('Test 1: Done, time:', delta)
+
+info = process.stdout.decode('utf-8').split('\r\n')
+del info[0], info[-1], info[-1]
+info = np.asarray(list(map(getInfo, info)))
+table = pd.read_parquet('example2.parquet')
+
+if len(table.columns) == len(info[:, 0]):
+    print("Test 2: Done")
+else:
+    print("Test 2: Failed: not all columns")
+
+if len(table[table.columns]) == 10000:
+    print("Test 3: Done")
+else:
+    print("Test 3: Failed: not all rows")
+
+
+for ind, i in enumerate(info[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table[info[ind][0]], float(info[ind][2].split(',')[0]), float(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table[info[ind][0]], int(info[ind][2].split(',')[0]), int(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table[info[ind][0]], info[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1] ):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table[info[ind][0]], info[ind][2].split(' ')[0].split(','), info[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+print('all data types overridden in json')
+flag1 = True
+start = time.time()
+process = subprocess.run(['python', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands.json'], capture_output=True)
+delta = time.time() - start
+
+if process.stderr:
+    print('Test 1: Failed:\n', process.stderr)
+    flag1 = False
+    exit()
+elif ' '.join(os.listdir()).find('example.parquet') == -1 and flag1:
+    print('Test 1: Failed:\n', 'file not generated')
+    flag1 = False
+    exit()
+
+if flag1:
+    print('Test 1: Done, time:', delta)
+
+info = process.stdout.decode('utf-8').split('\r\n')
+del info[0], info[-1], info[-1]
+info = np.asarray(list(map(getInfo, info)))
+table = pd.read_parquet('example.parquet')
+
+if len(table.columns) == len(info[:, 0]):
+    print("Test 2: Done")
+else:
+    print("Test 2: Failed: not all columns")
+
+if len(table[table.columns]) == 10000:
+    print("Test 3: Done")
+else:
+    print("Test 3: Failed: not all rows")
+
+
+for ind, i in enumerate(info[:, 1]):
+    if i == 'SetChoice':
+        if choiceTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Date':
+        if dateTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Float':
+        if floatTest(table[info[ind][0]], float(info[ind][2].split(',')[0]), float(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Integer':
+        if intTest(table[info[ind][0]], int(info[ind][2].split(',')[0]), int(info[ind][2].split(',')[1])):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'Mask':
+        if maskTest(table[info[ind][0]], info[ind][2].replace('[', '').replace(']', '').split(',')[0]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'String':
+
+        if stringTest(table[info[ind][0]], info[ind][2].replace('[', '').split(']')[0].split(',')[:-1], info[ind][2].replace('[', '').split(']')[0].split(',')[-1]):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'TimeStep':
+        if tsTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1] ):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+    elif i == 'WeighedChoice':
+        if wchoiceTest(table[info[ind][0]], info[ind][2].split(' ')[0].split(','), info[ind][2].split(' ')[1].split(','), 10000):
+            print(f"Test of {i} Done")
+        else:
+            print(f"Test of {i} Failed")
+print('not all data types overridden in json')
+flag1 = True
+start = time.time()
+process = subprocess.run(['python', 'generator.py', '-f', 'example', '-r', '10000', '-j', 'commands2.json'], capture_output=True)
 delta = time.time() - start
 
 if process.stderr:
