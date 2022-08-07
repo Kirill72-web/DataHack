@@ -19,7 +19,7 @@ def getInfo(text):
 
 def choiceTest(col, un):
     if len(col.unique()) == len(un):
-        return col.unique().tolist() in np.asarray(un)
+        return pd.Series(sorted(col.unique())).compare(pd.Series(sorted(un))).empty
     return False
 
 def wchoiceTest(col, un, unw, rows):
@@ -500,26 +500,22 @@ for ind, i in enumerate(info2[:, 1]):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
-key_1 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
-key_2 = np.asarray([[name, arg_]  for name, type_, arg_ in info1 if type_ == "Alias" ])
-if len(key_1[:, 0]) == len(key_2[:, 0]):
-    print("Test 4 Done")
-else:
-    print("Test 4 Failed: not all keys genered")
+key = np.asarray([[name, arg_] for name, type_, arg_ in info2 if type_ == "Alias" ])
 flag2 = True
-for i in range(len(key_1[:, 1])):
-    for j in range(len(key_2[:, 1])):
-        if key_1[:, 1][i] == key_1[:, 1][j]:
-            if table[key_1[:, 0][i]].compare(table[key_1[:, 0][i]]).empty:
-                print(f"Test of {key_1[:, 1][i]} Done")
-                flag2 = False
-if flag2:
-    print('Test of keys Failed')
-print('join key test')
+try:
+    for i in key:
+        if table[i[1]].compare(table2[i[0]]).empty:
+            print(f"Test of {i[0]} Done")
+            flag2 = False
+    if flag2:
+        print('Test of key Failed')
+except:
+    print('Test of key Failed')
+print('join key test by 3')
 flag1 = True
 start = time.time()
-process1 = subprocess.run(['python', 'generator.py', '-f', 'example_join', '-r', '10000'], capture_output=True)
-process2 = subprocess.run(['python', 'generator.py', '-f', 'example_join_s', '-r', '10000'], capture_output=True)
+process1 = subprocess.run(['python', 'generator.py', '-f', 'example_join_by_3_col', '-r', '10000'], capture_output=True)
+process2 = subprocess.run(['python', 'generator.py', '-f', 'example_join_by_3_col_s', '-r', '10000'], capture_output=True)
 delta = time.time() - start
 
 if process1.stderr or process2.stderr :
@@ -594,6 +590,7 @@ for ind, i in enumerate(info1[:, 1]):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
+
 for ind, i in enumerate(info2[:, 1]):
     if i == 'SetChoice':
         if choiceTest(table2[info2[ind][0]], info2[ind][2].replace('[', '').replace(']', '').split(',')):
@@ -636,18 +633,17 @@ for ind, i in enumerate(info2[:, 1]):
             print(f"Test of {i} Done")
         else:
             print(f"Test of {i} Failed")
-key_1 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
-key_2 = np.asarray([[name, arg_] for name, type_, arg_ in info1 if type_ == "Alias" ])
-if len(key_1[:, 0]) == len(key_2[:, 0]):
-    print("Test 4 Done")
-else:
-    print("Test 4 Failed: not all keys genered")
+
+key = np.asarray([[name, arg_] for name, type_, arg_ in info2 if type_ == "Alias" ])
+
+
 flag2 = True
-for i in range(len(key_1[:, 1])):
-    for j in range(len(key_2[:, 1])):
-        if key_1[:, 1][i] == key_1[:, 1][j]:
-            if table[key_1[:, 0][i]].compare(table[key_1[:, 0][i]]).empty:
-                print(f"Test of {key_1[:, 1][i]} Done")
-                flag2 = False
-if flag2:
+try:
+    for i in key:
+        if table[i[1]].compare(table2[i[0]]).empty:
+            print(f"Test of {i[0]} Done")
+            flag2 = False
+    if flag2:
+        print('Test of keys by 3 cols Failed')
+except:
     print('Test of keys by 3 cols Failed')
