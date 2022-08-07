@@ -5,36 +5,27 @@ from datahack import *
 import pickle
 
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Run generator')
-    parser.add_argument("--file", '-f', required=True)
-    parser.add_argument("--row", '-r', required=False, default=10000)
-    parser.add_argument("--json", '-j', required=False)
-    parser.add_argument("--preset", '-p', required=False)
-
-    argv = parser.parse_args()
+def generate(file_name, row_count: int, json_path, preset_path, test_mode=False):
     ALIAS_LIST = init()
 
-    if argv.json is None:
+    if json_path is None:
         current_table = {}
     else:
-        commands = json.load(open(argv.json, 'r'))
-        if argv.file in commands:
-            current_table = commands[argv.file]
+        commands = json.load(open(json_path, 'r'))
+        if file_name in commands:
+            current_table = commands[file_name]
         else:
             current_table = {}
 
-    row_count = int(argv.row)
-
-    module = __import__(argv.file)
+    module = __import__(file_name)
     table = module.Table()
 
     fields = list(filter(lambda x: x[0] != "_", dir(table)))
     output = pd.DataFrame(columns=fields, index=range(row_count))
     save = {}
 
-    if argv.preset:
-        preset = pd.read_csv(argv.preset) if ".csv" in argv.preset else pd.read_excel(argv.preset, engine='openpyxl')
+    if preset_path:
+        preset = pd.read_csv(preset_path) if ".csv" in preset_path else pd.read_excel(preset_path, engine='openpyxl')
         columns_preset = preset.columns
     else:
         columns_preset = {}
@@ -86,7 +77,8 @@ if __name__ == "__main__":
             elif data_type == "weight_choice":
                 print(field, type(WeighedChoice("")), argument)
                 if getattr(table, field).alias:
-                    output[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    output[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias).generate(
+                        row_count)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
                     output[field] = WeighedChoice(default=argument).generate(row_count)
@@ -132,7 +124,25 @@ if __name__ == "__main__":
         output[field] = Alias(save[field]).generate(row_count)
 
     print("=======Logging Finished=======")
-    output.to_parquet(argv.file+".parquet", index=False)
     with open("alias.pk", 'wb') as file:
         pickle.dump(ALIAS_LIST, file)
 
+    if test_mode:
+        all_field = {}
+        for field in fields:
+            all_field[field] = getattr(table, field)
+        return all_field, output
+
+    return output
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Run generator')
+    parser.add_argument("--file", '-f', required=True)
+    parser.add_argument("--row", '-r', required=False, default=10000)
+    parser.add_argument("--json", '-j', required=False)
+    parser.add_argument("--preset", '-p', required=False)
+
+    argv = parser.parse_args()
+    output = generate(argv.file, int(argv.row), argv.json, argv.preset)
+    output.to_parquet(argv.file + ".parquet", index=False)
