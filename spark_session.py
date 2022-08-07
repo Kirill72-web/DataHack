@@ -17,7 +17,7 @@ class SparkSessionManager:
         self.parquet_files_cluster = list()
 
     def upload_new_dataframe(self, file_path: str):
-        self.parquet_files_cluster[self.__get_name(file_path)] = self.sql_context.read.parquet(file_path))
+        self.parquet_files_cluster[self.__get_name(file_path)] = self.sql_context.read.parquet(file_path)
 
     def get_dataframe(self, name: str):
         try:
@@ -25,7 +25,6 @@ class SparkSessionManager:
         except KeyError:
             return None
 
-    
     def __create_new_session(self):
         self.spark_session = SparkSession.builder.master("local[*]") \
             .appName(SPARK_APP_NAME) \
