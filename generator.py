@@ -4,7 +4,6 @@ import json
 from datahack import *
 import pickle
 import sys
-import spark_session
 
 
 def generate(file_name, row_count: int, json_path=None, preset_path=None, test_mode=False):
@@ -166,8 +165,6 @@ if __name__ == "__main__":
         print("Error: Sorry, but now you can use only json or preset file, but not all together.")
         sys.exit(0)
 
-    session = spark_session.SparkSessionManager()
     output = generate(argv.file, int(argv.row), argv.json, argv.preset)
     output.to_parquet(argv.file + ".parquet", index=False)
-    session.upload_new_dataframe(argv.file)
 
