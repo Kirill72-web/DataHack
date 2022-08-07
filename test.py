@@ -142,7 +142,7 @@ def run(command):
         print('Test 1: Failed:\n', process.stderr)
         flag1 = False
         exit()
-    elif ' '.join(os.listdir()).find('example_load.parquet') == -1 and flag1:
+    elif ' '.join(os.listdir()).find(f'{command[3]}.parquet') == -1 and flag1:
         print('Test 1: Failed:\n', 'file not generated')
         flag1 = False
         exit()
