@@ -2,5 +2,6 @@ pandas~=1.4.3
 numpy~=1.23.1
 argparse~=1.4.0
 spark
+pyspark[sql]
 xlrd
 xlwt
