@@ -5,7 +5,7 @@ from datahack import *
 import pickle
 
 
-def generate(file_name, row_count: int, json_path, preset_path, test_mode=False):
+def generate(file_name, row_count: int, json_path=None, preset_path=None, test_mode=False):
     ALIAS_LIST = init()
 
     if json_path is None:
