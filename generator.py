@@ -1,14 +1,16 @@
 import pandas as pd
 import argparse
 import json
-from datahack import *
 import pickle
 import sys
+import logging
+
+from datahack import *
+
+ALIAS_LIST = init()
 
 
 def generate(file_name, row_count: int, json_path=None, preset_path=None, test_mode=False):
-    ALIAS_LIST = init()
-
     if json_path is None:
         current_table = {}
     else:
@@ -32,10 +34,9 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
     else:
         columns_preset = {}
 
-    print("=======Logging Info=======")
     for field in fields:
         if field in columns_preset:
-            print(field, type(getattr(table, field)), getattr(table, field).default)
+            logging.info(field, type(getattr(table, field)), getattr(table, field).default)
             output[field] = preset[field].copy()
             all_field[field] = getattr(table, field)
 
@@ -46,7 +47,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
             argument = eval(argument)
 
             if data_type == "float":
-                print(field, type(Float("")), argument)
+                logging.info(field, type(Float("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Float(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = Float(default=argument, alias=getattr(table, field).alias)
@@ -56,7 +57,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = Float(default=argument)
 
             elif data_type == "integer":
-                print(field, type(Integer("")), argument)
+                logging.info(field, type(Integer("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Integer(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = Integer(default=argument, alias=getattr(table, field).alias)
@@ -66,7 +67,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = Integer(default=argument)
 
             elif data_type == "string":
-                print(field, type(String("")), argument)
+                logging.info(field, type(String("")), argument)
                 if getattr(table, field).alias:
                     output[field] = String(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = String(default=argument, alias=getattr(table, field).alias)
@@ -76,7 +77,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = String(default=argument)
 
             elif data_type == "set_choice":
-                print(field, type(SetChoice("")), argument)
+                logging.info(field, type(SetChoice("")), argument)
                 if getattr(table, field).alias:
                     output[field] = SetChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = SetChoice(default=argument, alias=getattr(table, field).alias)
@@ -86,9 +87,10 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = SetChoice(default=argument)
 
             elif data_type == "weight_choice":
-                print(field, type(WeighedChoice("")), argument)
+                logging.info(field, type(WeighedChoice("")), argument)
                 if getattr(table, field).alias:
-                    output[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    output[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias).generate(
+                        row_count)
                     all_field[field] = WeighedChoice(default=argument, alias=getattr(table, field).alias)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
@@ -96,7 +98,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = WeighedChoice(default=argument)
 
             elif data_type == "mask":
-                print(field, type(Mask("")), argument)
+                logging.info(field, type(Mask("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Mask(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = Mask(default=argument, alias=getattr(table, field).alias)
@@ -106,7 +108,7 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = Mask(default=argument)
 
             elif data_type == "date":
-                print(field, type(Date("")), argument)
+                logging.info(field, type(Date("")), argument)
                 if getattr(table, field).alias:
                     output[field] = Date(default=argument, alias=getattr(table, field).alias).generate(row_count)
                     all_field[field] = Date(default=argument, alias=getattr(table, field).alias)
@@ -116,21 +118,21 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
                     all_field[field] = Date(default=argument)
 
             elif data_type == "timestep":
-                print(field, type(TimeStemp("")), argument)
+                logging.info(field, type(TimeStamp("")), argument)
                 if getattr(table, field).alias:
-                    output[field] = TimeStemp(default=argument, alias=getattr(table, field).alias).generate(row_count)
-                    all_field[field] = TimeStemp(default=argument, alias=getattr(table, field).alias)
+                    output[field] = TimeStamp(default=argument, alias=getattr(table, field).alias).generate(row_count)
+                    all_field[field] = TimeStamp(default=argument, alias=getattr(table, field).alias)
                     ALIAS_LIST[getattr(table, field).alias] = output[field].copy()
                 else:
-                    output[field] = TimeStemp(default=argument).generate(row_count)
-                    all_field[field] = TimeStemp(default=argument)
+                    output[field] = TimeStamp(default=argument).generate(row_count)
+                    all_field[field] = TimeStamp(default=argument)
 
             elif data_type == "alias":
-                print(field, Alias, argument)
+                logging.info(field, Alias, argument)
                 save[field] = argument
 
         else:
-            print(field, type(getattr(table, field)), getattr(table, field).default)
+            logging.info(field, type(getattr(table, field)), getattr(table, field).default)
             if type(getattr(table, field)) == Alias:
                 save[field] = getattr(table, field).default
             else:
@@ -142,8 +144,6 @@ def generate(file_name, row_count: int, json_path=None, preset_path=None, test_m
     for field in save.keys():
         output[field] = Alias(save[field]).generate(row_count)
         all_field[field] = Alias(save[field])
-
-    print("=======Logging Finished=======")
     with open("alias.pk", 'wb') as file:
         pickle.dump(ALIAS_LIST, file)
 
@@ -161,12 +161,12 @@ if __name__ == "__main__":
     parser.add_argument("--preset", '-p', required=False)
 
     argv = parser.parse_args()
+
+    logging.info("Starting logging")
+
     if argv.preset and argv.json:
-        print("Error: Sorry, but now you can use only json or preset file, but not all together.")
+        logging.error("Sorry, but now you can use only json or preset file, but not all together.")
         sys.exit(0)
 
     output = generate(argv.file, int(argv.row), argv.json, argv.preset)
-    output.to_parquet(argv.file + ".parquet", index=False)
     output.to_csv(argv.file + ".csv", index=False)
-
-

@@ -1,6 +1,6 @@
 FROM ubuntu:22.04
 
-MAINTAINER Kirill Cymbaliuk <kirill.lego-kot@ya.ru>
+MAINTAINER Kirill Cymbaliuk <tsimbaliukk@ya.ru>
 
 RUN apt-get update
 RUN apt-get install -y git

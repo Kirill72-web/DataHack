@@ -52,7 +52,7 @@ def testTypes(info, table):
                 print(f"Test of {i} Done")
             else:
                 print(f"Test of {i} Failed")
-        elif i == 'TimeStemp':
+        elif i == 'TimeStamp':
             if tsTest(table[info[ind][0]], info[ind][2].split(',')[0], info[ind][2].split(',')[1]):
                 print(f"Test of {i} Done")
             else:

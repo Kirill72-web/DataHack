@@ -30,13 +30,13 @@ class DataType(ABC):
 class Integer(DataType):
 
     def generate(self, row_count):
-        return [np.random.randint(self.default[0], self.default[1]) for i in range(row_count)]
+        return [np.random.randint(self.default[0], self.default[1]) for _ in range(row_count)]
 
 
 class Float(DataType):
 
     def generate(self, row_count):
-        return [np.random.uniform(self.default[0], self.default[1]) for i in range(row_count)]
+        return [np.random.uniform(self.default[0], self.default[1]) for _ in range(row_count)]
 
 
 class Alias(DataType):
@@ -51,23 +51,25 @@ class String(DataType):
         if type(self.default[1]) == int:
             symbols = self.default[0]
             return [''.join(
-                str(x) for x in [symbols[np.random.randint(0, len(symbols), 1)[0]] for j in range(int(self.default[1]))])
-                for w in range(row_count)]
+                str(x) for x in
+                [symbols[np.random.randint(0, len(symbols), 1)[0]] for _ in range(int(self.default[1]))])
+                for _ in range(row_count)]
         else:
             return [''.join(str(x) for x in
-                             [self.default[np.random.randint(0, len(self.default), 1)[0]] for j in range(np.random.randint(1, 20, 1)[0])])
-                     for w in range(row_count)]
+                            [self.default[np.random.randint(0, len(self.default), 1)[0]] for _ in
+                             range(np.random.randint(1, 20, 1)[0])])
+                    for _ in range(row_count)]
+
 
 class SetChoice(DataType):
 
     def generate(self, row_count):
-        return [np.random.choice(self.default) for i in range(row_count)]
+        return [np.random.choice(self.default) for _ in range(row_count)]
 
 
-class WeighedChoice(DataType):  # Вероятности - числа сумма которых равна 100, вероятностей должно быть столько же,
-    # сколько вариантов
+class WeighedChoice(DataType):
     def generate(self, row_count):
-        return [np.random.choice(self.default[0], p=list(map(lambda x: x / 100, self.default[1]))) for i in
+        return [np.random.choice(self.default[0], p=list(map(lambda x: x / 100, self.default[1]))) for _ in
                 range(row_count)]
 
 
@@ -77,7 +79,7 @@ class Mask(DataType):
     digits = [i for i in range(10)]
 
     def generate(self, row_count):
-        return [self.get_string(self.default[0]) for j in range(row_count)]
+        return [self.get_string(self.default[0]) for _ in range(row_count)]
 
     def get_string(self, mask):
         for i in range(len(mask)):
@@ -98,18 +100,19 @@ def str_time_prop(start, end, time_format, prop):
     return time.strftime(time_format, time.localtime(ptime))
 
 
-class TimeStemp(DataType):
-
-    def random_date(self, start, end, prop):
+class TimeStamp(DataType):
+    @staticmethod
+    def random_date(start, end, prop):
         return str_time_prop(start, end, '%Y-%m-%d %H:%M:%S', prop)
 
     def generate(self, row_count):
-        return [self.random_date(self.default[0], self.default[1], random.random()) for i in range(row_count)]
+        return [self.random_date(self.default[0], self.default[1], random.random()) for _ in range(row_count)]
 
 
 class Date(DataType):
-    def random_date(self, start, end, prop):
+    @staticmethod
+    def random_date(start, end, prop):
         return str_time_prop(start, end, '%Y-%m-%d', prop)
 
     def generate(self, row_count):
-        return [self.random_date(self.default[0], self.default[1], random.random()) for i in range(row_count)]
+        return [self.random_date(self.default[0], self.default[1], random.random()) for _ in range(row_count)]
