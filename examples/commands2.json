@@ -1,8 +1,0 @@
-{
-  "example": {
-    "string": "string (['e', 'd', 'f'], 4)"
-  },
-  "nex_table": {
-    "some_field": "data_type argument"
-  }
-}
