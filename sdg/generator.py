@@ -1,8 +1,6 @@
 import inspect
-import sys
 import pandas as pd
-
-from sdg.types import *
+import sys
 
 
 def generate_from_py(file_name, row_count):
@@ -25,11 +23,3 @@ def generate_from_py(file_name, row_count):
         output[table_name.replace("Table", "")] = dataframe
 
     return output
-
-
-if __name__ == "__main__":
-
-    dfs = generate_from_py("example", 100)
-
-    for key in dfs.keys():
-        dfs[key].to_csv(f"example_{key.lower()}.csv", index=False)

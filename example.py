@@ -1,4 +1,4 @@
-from sdg.types import *
+from sdg.type import *
 
 
 class Table1:
