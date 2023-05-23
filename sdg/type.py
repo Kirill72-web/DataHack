@@ -1,19 +1,20 @@
 from abc import ABC, abstractmethod
 import numpy as np
-import os.path
-import pickle
 import time
 import random
 
 ALIAS_LIST = {}
 
 
-def init():
-    global ALIAS_LIST
-    if os.path.exists("alias.pk"):
-        with open("alias.pk", 'rb') as file:
-            ALIAS_LIST = pickle.load(file)
-    return ALIAS_LIST
+def save_alias(func):
+    def wrapper(obj, row_count):
+        result = func(obj, row_count)
+        if obj.alias:
+            ALIAS_LIST[obj.alias] = result
+
+        return result
+
+    return wrapper
 
 
 class DataType(ABC):
@@ -28,25 +29,25 @@ class DataType(ABC):
 
 
 class Integer(DataType):
-
+    @save_alias
     def generate(self, row_count):
         return [np.random.randint(self.default[0], self.default[1]) for _ in range(row_count)]
 
 
 class Float(DataType):
-
+    @save_alias
     def generate(self, row_count):
         return [np.random.uniform(self.default[0], self.default[1]) for _ in range(row_count)]
 
 
 class Alias(DataType):
-
+    @save_alias
     def generate(self, row_count):
         return ALIAS_LIST[self.default]
 
 
 class String(DataType):
-
+    @save_alias
     def generate(self, row_count):
         if type(self.default[1]) == int:
             symbols = self.default[0]
@@ -62,12 +63,13 @@ class String(DataType):
 
 
 class SetChoice(DataType):
-
+    @save_alias
     def generate(self, row_count):
         return [np.random.choice(self.default) for _ in range(row_count)]
 
 
 class WeighedChoice(DataType):
+    @save_alias
     def generate(self, row_count):
         return [np.random.choice(self.default[0], p=list(map(lambda x: x / 100, self.default[1]))) for _ in
                 range(row_count)]
@@ -78,6 +80,7 @@ class Mask(DataType):
                 'u', 'v', 'w', 'x', 'y', 'z']
     digits = [i for i in range(10)]
 
+    @save_alias
     def generate(self, row_count):
         return [self.get_string(self.default[0]) for _ in range(row_count)]
 
@@ -105,6 +108,7 @@ class TimeStamp(DataType):
     def random_date(start, end, prop):
         return str_time_prop(start, end, '%Y-%m-%d %H:%M:%S', prop)
 
+    @save_alias
     def generate(self, row_count):
         return [self.random_date(self.default[0], self.default[1], random.random()) for _ in range(row_count)]
 
@@ -114,5 +118,6 @@ class Date(DataType):
     def random_date(start, end, prop):
         return str_time_prop(start, end, '%Y-%m-%d', prop)
 
+    @save_alias
     def generate(self, row_count):
         return [self.random_date(self.default[0], self.default[1], random.random()) for _ in range(row_count)]
